@@ -42,6 +42,7 @@ pour évaluer l'efficacité de notre solution.
 
 # Algorithme de force brutes
 
+```python
 def investissement_actions(actions, budget_max):
     # Calculer le potentiel de gain pour chaque action
     for action in actions:
@@ -60,3 +61,4 @@ def investissement_actions(actions, budget_max):
     
     # Retourner les actions sélectionnées
     return actions_selectionnees
+````
