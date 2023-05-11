@@ -1,4 +1,5 @@
-"""1. Lire les informations sur les actions à partir du fichier d'entrée
+"""
+1. Lire les informations sur les actions à partir du fichier d'entrée
 2. Générer toutes les combinaisons d'actions possibles
 3. Pour chaque combinaison, calculer le potentiel de gain et vérifier si elle convient au budget maximum
 4. Retourner la combinaison avec le potentiel de gain le plus élevé qui convient au budget maximum

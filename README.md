@@ -1,12 +1,19 @@
 # OpenClassrooms Projet7
 
+#
+
 # Résolvez des problèmes en utilisant des algorithmes en Python
 
+#
+
 # AlgoInvest&Trade
+
+#
 
 ## Logo de l'entreprise
 <img src="AlgoInvest&Trade.png">
 
+#
 Le problème est celui de déterminer la meilleure stratégie d'investissement pour un client avec un budget maximum de 500
 euros, sachant qu'il ne peut acheter qu'une action à la fois, sans fractionner l'achat.
 
