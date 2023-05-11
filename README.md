@@ -1,10 +1,10 @@
-#OpenClassrooms Projet7
+# OpenClassrooms Projet7
 
-#Résolvez des problèmes en utilisant des algorithmes en Python
+# Résolvez des problèmes en utilisant des algorithmes en Python
 
-#AlgoInvest&Trade
+# AlgoInvest&Trade
 
-
+## Logo de l'entreprise
 <img src="AlgoInvest&Trade.png">
 
 Le problème est celui de déterminer la meilleure stratégie d'investissement pour un client avec un budget maximum de 500
