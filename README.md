@@ -1,5 +1,5 @@
-#OpenClassrooms Projet7 
-#Résolvez des problèmes en utilisant des algorithmes en Python
+#OpenClassrooms Projet7
+##Résolvez des problèmes en utilisant des algorithmes en Python
 #AlgoInvest&Trade
 
 <img src="AlgoInvest&Trade.png">
