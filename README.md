@@ -40,7 +40,7 @@ pour évaluer l'efficacité de notre solution.
 4. Sélectionner les actions dans l'ordre trié jusqu'à ce que le budget maximum soit atteint ou dépassé
 5. Retourner les actions sélectionnées
 
-# Algorithme en Python
+# Algorithme de force brutes
 
 def investissement_actions(actions, budget_max):
     # Calculer le potentiel de gain pour chaque action
