@@ -1,43 +1,71 @@
 """
 1. Lire les informations sur les actions à partir du fichier d'entrée
 2. Générer toutes les combinaisons d'actions possibles
-3. Pour chaque combinaison, calculer le potentiel de gain et vérifier si elle convient au budget maximum
-4. Retourner la combinaison avec le potentiel de gain le plus élevé qui convient au budget maximum
+3. Pour chaque combinaison, calculer le potentiel de gain et vérifier si elle convient au budget max_value
+4. Retourner la combinaison avec le potentiel de gain le plus élevé qui convient au budget max_value
 """
+
 import csv
-import itertools
+import time
 
-MAXIMUM_COST = 500
+# Création de tuples pour chaque action depuis fichier csv : nom de l'action, coût de l'action, % profit
+with open("datas/dataset_force_brute.csv", mode="r") as file:
+    reader = csv.reader(file)
+    next(reader)
+    data = [
+        (row[0], float(row[1]), float(row[1]) * float(row[2]) / 100)
+        for row in reader
+    ]
+
+# Jeu de données éventuel pour soutenance, avec 3 actions.
+soutenance = [("action_1", 4, 6), ("action_2", 3, 5), ("action_3", 2, 4)]
 
 
-def read_csv_actions():
-    actions = []
-    csvfile = csv.DictReader(open('actions.csv'))
-    for row in csvfile:
-        action = (row['name'], int(row['price']), (int(row['profit']) * 0.01) * int(row['price']))
-        actions.append(action)
-    return actions
+# Fonction force brute, récursive, testant toutes les combinaisons possibles
+def force_brute_algorithme(max_value, actions, actions_combinations=None):
+    """
+        Approche brute pour trouver la solution optimale au problème du sac à dos 0/1.
+        Retourne un tuple contenant la valeur maximale et la liste des éléments choisis.
+        """
+
+    if actions_combinations is None:
+        actions_combinations = []
+
+    if not actions:
+        return (
+            sum(action[2] for action in actions_combinations),
+            actions_combinations,
+        )
+    action = actions[0]
+    profit_sans_action, liste_sans_action = force_brute_algorithme(max_value, actions[1:], actions_combinations)
+    if action[1] <= max_value:
+        profit_avec_action, liste_avec_action = \
+            force_brute_algorithme(max_value - action[1], actions[1:], actions_combinations + [action])
+        if profit_sans_action < profit_avec_action:
+            return profit_avec_action, liste_avec_action
+    return profit_sans_action, liste_sans_action
 
 
-def investissement_actions_force_brute(actions, budget_max):
-    # Générer toutes les combinaisons d'actions possibles
-    combinaisons_actions = []
-    for i in range(1, len(actions) + 1):
-        combinaisons_actions += list(itertools.combinations(actions, i))
+def main():
+    start = time.perf_counter()
+    result = force_brute_algorithme(500, data)
+    stop = time.perf_counter()
+    _extracted_from_main_5()
+    for action in result[1]:
+        print(action[0])
+    _extracted_from_main_5()
+    print(f"Profit max: {round(result[0], 2)}€")
+    print(f"Somme dépensée: {sum(action[1] for action in result[1])}€")
+    print(f"Temps de traitement: {round(stop - start, 2)}s")
+    print("=============================================================")
 
-    # Calculer le potentiel de gain et vérifier si chaque combinaison convient au budget maximum
-    meilleure_combinaison = None
-    potentiel_gain_max = 0
-    for combinaison in combinaisons_actions:
-        prix_achat_total = sum(action['prix_achat'] for action in combinaison)
-        if prix_achat_total <= budget_max:
-            potentiel_gain = sum(
-                action['valeur_vente'] - action['prix_achat']
-                for action in combinaison
-            )
-            if potentiel_gain > potentiel_gain_max:
-                potentiel_gain_max = potentiel_gain
-                meilleure_combinaison = combinaison
 
-    # Retourner la combinaison avec le potentiel de gain le plus élevé qui convient au budget maximum
-    return list(meilleure_combinaison)
+# TODO Rename this here and in `main`
+def _extracted_from_main_5():
+    print("=============================================================\n"
+          "=============================================================")
+    print("Les résultats meilleurs actions sélectionnées:")
+    print("=============================================================")
+
+
+main()

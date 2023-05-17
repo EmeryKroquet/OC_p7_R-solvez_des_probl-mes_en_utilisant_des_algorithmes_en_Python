@@ -64,8 +64,8 @@ def investissement_actions(actions, budget_max):
     
     # Trier les actions par ordre décroissant de potentiel de gain
     actions_triees = sorted(actions, key=lambda k: k['potentiel_gain'], reverse=True)
-    
-    # Sélectionner les actions dans l'ordre trié jusqu'à ce que le budget maximum soit atteint ou dépassé
+
+    # Sélectionner les actions dans l'ordre trié jusqu'à ce que le budget max_value soit atteint ou dépassé
     budget_utilise = 0
     actions_selectionnees = []
     for action in actions_triees:
@@ -76,3 +76,7 @@ def investissement_actions(actions, budget_max):
     # Retourner les actions sélectionnées
     return actions_selectionnees
 ````
+
+#  
+
+# Algorithme  d'optimisation

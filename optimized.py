@@ -1,30 +1,76 @@
+import csv
 import itertools
-from typing import List, Tuple
+import time
+
+csv_file = "datas/dataset2_Python+P7.csv"
+
+# Création de tuples pour chaque action depuis fichier csv_file: nom de l'action, coût de l'action, % profit
+with open(csv_file, mode="r") as file:
+    reader = csv.reader(file)
+    next(reader)
+
+    data = [
+        (row[0], int(float(row[1]) * 100), float(row[1]) * float(row[2]))
+        for row in reader
+        if float(row[1]) > 0
+    ]
 
 
-def optimize_pay(W: int, wt: List[int], val: List[int]) -> Tuple[int, List[int]]:
+# Algorithme dynamique
+def algorithme_optimised(max_value, actions):
     """
-    Dynamic programming approach to find the optimal solution to the 0/1 knapsack problem.
-    Returns a tuple containing the maximum value and the list of items chosen.
-    """
-    n = len(val)
-    K = [[0 for _ in range(W + 1)] for _ in range(n + 1)]
-    for i, w in itertools.product(range(1, n + 1), range(1, W + 1)):
-        K[i][w] = (
-            max(val[i - 1] + K[i - 1][w - wt[i - 1]], K[i - 1][w])
-            if wt[i - 1] <= w
-            else K[i - 1][w]
+        Approche de programmation dynamique pour trouver la solution optimale au problème du sac à dos 0/1.
+        Renvoie un tuple contenant la valeur maximale et la liste des éléments choisis.
+        """
+
+    matrix = [[0 for _ in range(max_value + 1)] for _ in range(len(actions) + 1)]
+
+    # axe-y pour la liste des actions
+    for y, x in itertools.product(range(1, len(actions) + 1), range(1, max_value + 1)):
+        # si le coût de l'action > montant
+        matrix[y][x] = (
+            max(
+                actions[y - 1][2] + matrix[y - 1][x - actions[y - 1][1]],
+                matrix[y - 1][x],
+            )
+            if actions[y - 1][1] <= x
+            else matrix[y - 1][x]
         )
-    max_value = K[n][W]
-    max_items = []
-    w = W
-    for i in range(n, 0, -1):
-        if max_value <= 0:
-            break
-        if max_value == K[i - 1][w]:
-            continue
-        max_items.append(i - 1)
-        max_value -= val[i - 1]
-        w -= wt[i - 1]
-    max_items.reverse()
-    return K[n][W], max_items
+    # Retrouver les actions sélections en balayant la matrix en sens inverse
+    n = len(actions)
+    actions_combinations = []
+
+    while max_value >= 0 and n >= 0:
+        action = actions[n - 1]
+        if matrix[n][max_value] == matrix[n - 1][max_value - action[1]] + action[2]:
+            actions_combinations.append(action)
+            max_value -= action[1]
+
+        n -= 1
+
+    return matrix[-1][-1], actions_combinations
+
+
+def main():
+    start = time.perf_counter()
+    result = algorithme_optimised(48924, data)
+    stop = time.perf_counter()
+    _extracted_from_main_5()
+    for action in result[1]:
+        print("\n", action[0])
+    _extracted_from_main_5()
+    print(f"Profit maximal: {round(result[0] / 100, 2)}€")
+    print(f"Somme dépensée: {sum(action[1] / 100 for action in result[1])}€")
+    print(f"Temps de traitement: {round(stop - start, 2)}s")
+    print("=============================================================")
+
+
+# TODO Rename this here and in `main`
+def _extracted_from_main_5():
+    print("=============================================================\n"
+          "=============================================================")
+    print("Les meilleurs résultats des actions sélectionnées:")
+    print("=============================================================")
+
+
+main()
