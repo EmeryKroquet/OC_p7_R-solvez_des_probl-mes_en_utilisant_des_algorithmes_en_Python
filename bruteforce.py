@@ -50,10 +50,10 @@ def main():
     start = time.perf_counter()
     result = force_brute_algorithme(500, data)
     stop = time.perf_counter()
-    _extracted_from_main_5()
+    extracted_from_main()
     for action in result[1]:
         print(action[0])
-    _extracted_from_main_5()
+    extracted_from_main()
     print(f"Profit max: {round(result[0], 2)}€")
     print(f"Somme dépensée: {sum(action[1] for action in result[1])}€")
     print(f"Temps de traitement: {round(stop - start, 2)}s")
@@ -61,7 +61,7 @@ def main():
 
 
 # TODO Rename this here and in `main`
-def _extracted_from_main_5():
+def extracted_from_main():
     print("=============================================================\n"
           "=============================================================")
     print("Les résultats meilleurs actions sélectionnées:")

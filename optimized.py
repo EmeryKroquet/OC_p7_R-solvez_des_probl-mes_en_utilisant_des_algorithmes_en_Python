@@ -55,10 +55,10 @@ def main():
     start = time.perf_counter()
     result = algorithme_optimised(48924, data)
     stop = time.perf_counter()
-    _extracted_from_main_5()
+    extracted_from_main()
     for action in result[1]:
         print("\n", action[0])
-    _extracted_from_main_5()
+    extracted_from_main()
     print(f"Profit maximal: {round(result[0] / 100, 2)}€")
     print(f"Somme dépensée: {sum(action[1] / 100 for action in result[1])}€")
     print(f"Temps de traitement: {round(stop - start, 2)}s")
@@ -66,7 +66,7 @@ def main():
 
 
 # TODO Rename this here and in `main`
-def _extracted_from_main_5():
+def extracted_from_main():
     print("=============================================================\n"
           "=============================================================")
     print("Les meilleurs résultats des actions sélectionnées:")
