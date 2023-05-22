@@ -43,7 +43,7 @@ les différences dans les stratégies d'investissement proposées et analyser le
 elles diffèrent. Nous pourrions également comparer les performances de notre algorithme avec celles de Sienna 
 pour évaluer l'efficacité de notre solution.
 
-# Algorithme de notre solution
+# Algorithme de force brute notre solution
 1. Lire les informations sur les actions à partir du fichier d'entrée
 2. Calculer le potentiel de gain pour chaque action
 3. Trier les actions par ordre décroissant de potentiel de gain
@@ -108,22 +108,32 @@ investissement_force_brute(capacite_totale, liste_actions)
 
 # Algorithme  d'optimisation
 
-### 1. Lecture des données :
+L'algorithme optimisé pour résoudre le problème d'investissement est basé sur la programmation dynamique.
+Voici l'algorithme optimisé :
 
-- Lire le fichier contenant les informations sur les actions.
-- Chaque ligne du fichier représente une action avec son nom, son prix d'achat et son prix de vente.
+### 1. Création d'une matrice de programmation dynamique :
 
-### 2. Initialisation :
+- Créer une matrice de dimensions (nombre d'actions + 1) x (capacité totale + 1).
+- Initialiser toutes les valeurs de la matrice à zéro.
 
-- Définir une variable pour représenter la capacité totale d'investissement.
-- Définir une liste pour stocker les actions disponibles.
+### 2. Remplissage de la matrice :
 
-### 3. Calcul des bénéfices :
+- Parcourir les actions disponibles de manière itérative.
+- Pour chaque action, itérer sur les capacités de 1 à la capacité totale.
+- Si le prix d'achat de l'action est inférieur ou égal à la capacité courante, alors :
+  - Calculer le bénéfice total possible en ajoutant le bénéfice de l'action à la valeur correspondante dans la matrice
+  - pour la capacité réduite.
+  - Comparer le bénéfice total avec la valeur précédente pour la même capacité et choisir la valeur maximale.
+- Sinon, copier la valeur précédente pour la même capacité dans la matrice.:
 
-- Pour chaque action dans la liste des actions disponibles :
-- Calculer le bénéfice en soustrayant le prix d'achat du prix de vente.
-- Ajouter le bénéfice à l'action correspondante.
-- Trier les actions par rapport au rapport bénéfice/prix d'achat de manière décroissante.
+### 3. Reconstruction de la solution optimale :
+
+- À partir de la dernière case de la matrice, suivre le chemin du bénéfice maximal.
+- Si la valeur de la case courante diffère de la valeur de la case précédente pour la même capacité, cela signifie que
+- l'action correspondante a été sélectionnée.
+- Ajouter l'action sélectionnée à la liste des actions choisies et réduire la capacité totale et l'indice de l'action
+- courante.
+- Répéter cette étape jusqu'à atteindre la première case de la matrice.:
 
 ### 4. Sélection des actions :
 
@@ -136,58 +146,38 @@ investissement_force_brute(capacite_totale, liste_actions)
 Afficher la liste des actions sélectionnées, représentant la meilleure stratégie d'investissement.
 Afficher le bénéfice total obtenu.
 
+L'algorithme optimisé utilise la programmation dynamique pour éviter les calculs redondants et ne considère que les
+sous-problèmes nécessaires à la solution optimale. Cela réduit considérablement le temps d'exécution et améliore
+l'efficacité de l'algorithme.
+
 ### Code d'optimisation
 
 ````python
-def investissement_optimise(capacite, actions):
-    nb_actions = len(actions)
+def meilleur_investissement_optimise(capacite_totale, actions):
+  nb_actions = len(actions)
 
-    # Création de la matrice de programmation dynamique
-    matrice = [[0] * (capacite + 1) for _ in range(nb_actions + 1)]
+  # Création de la matrice de programmation dynamique
+  matrice = [[0] * (capacite_totale + 1) for _ in range(nb_actions + 1)]
 
-    # Remplissage de la matrice
-    for i in range(1, nb_actions + 1):
-        for j in range(1, capacite + 1):
-            action_courante = actions[i - 1]
-            if action_courante['prix_achat'] <= j:
-                matrice[i][j] = max(
-                    matrice[i - 1][j],
-                    matrice[i - 1][j - action_courante['prix_achat']] + action_courante['benefice']
-                )
-            else:
-                matrice[i][j] = matrice[i - 1][j]
+  # Remplissage de la matrice
+  for i in range(1, nb_actions + 1):
+    for j in range(1, capacite_totale + 1):
+      action_courante = actions[i - 1]
+      if action_courante['prix_achat'] <= j:
+        matrice[i][j] = max(
+          matrice[i - 1][j],
+          matrice[i - 1][j - action_courante['prix_achat']] + action_courante['benefice']
+        )
+      else:
+        matrice[i][j] = matrice[i - 1][j]
 
-    # Reconstruction de la solution optimale
+  # Reconstruction de la solution optimale
+  actions_selectionnees = []
+  i = nb_actions
+  j = capacite_totale
+  while i > 0 and j > 0:
+    if matrice[i][j] != matrice
 
-
-total_benefice = matrice[nb_actions][capacite]
-actions_selectionnees = []
-i = nb_actions
-j = capacite
-while i > 0 and j > 0:
-    if matrice[i][j] != matrice[i - 1][j]:
-        action_selectionnee = actions[i - 1]
-        actions_selectionnees.append(action_selectionnee)
-        j -= action_selectionnee['prix_achat']
-    i -= 1
-
-# Affichage des résultats
-print("Stratégie d'investissement optimale :")
-for action in actions_selectionnees:
-    print("- Action :", action['nom'], "Achat :", action['prix_achat'], "Vente :", action['prix_vente'])
-print("Bénéfice total :", total_benefice)
-
-# Exemple d'utilisation
-capacite_totale = 50
-liste_actions = [
-    {'nom': 'Action 1', 'prix_achat': 10, 'prix_vente': 30, 'benefice': 0},
-    {'nom': 'Action 2', 'prix_achat': 5, 'prix_vente': 20, 'benefice': 0},
-    {'nom': 'Action 3', 'prix_achat': 12, 'prix_vente': 35, 'benefice': 0},
-    {'nom': 'Action 4', 'prix_achat': 8, 'prix_vente': 25, 'benefice': 0},
-    {'nom': 'Action 5', 'prix_achat': 15, 'prix_vente': 40, 'benefice': 0},
-]
-
-investissement_optimise(capacite_totale, liste_actions)
 ````
 
 L'exécution de cet algorithme de programmation dynamique devrait être beaucoup plus rapide que l'utilisation d'une

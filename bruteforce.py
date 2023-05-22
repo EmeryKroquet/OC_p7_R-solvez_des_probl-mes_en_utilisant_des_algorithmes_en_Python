@@ -64,7 +64,7 @@ def main():
 def extracted_from_main():
     print("=============================================================\n"
           "=============================================================")
-    print("Les résultats meilleurs actions sélectionnées:")
+    print("Les meilleurs résultats actions sélectionnées: ")
     print("=============================================================")
 
 
