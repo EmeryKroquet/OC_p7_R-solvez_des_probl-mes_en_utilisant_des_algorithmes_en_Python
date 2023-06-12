@@ -2,32 +2,34 @@ import csv
 import itertools
 import time
 
-csv_file = "datas/dataset2_Python+P7.csv"
-
-# Création de tuples pour chaque action depuis fichier csv_file: nom de l'action, coût de l'action, % profit
-with open(csv_file, mode="r") as file:
-    reader = csv.reader(file)
-    next(reader)
-
-    data = [
-        (row[0], int(float(row[1]) * 100), float(row[1]) * float(row[2]))
-        for row in reader
-        if float(row[1]) > 0
-    ]
-
-
-# Algorithme dynamique
-def algorithme_optimised(max_value, actions):
+def read_data_from_csv(csv_file):
     """
-        Approche de programmation dynamique pour trouver la solution optimale au problème du sac à dos 0/1.
-        Renvoie un tuple contenant la valeur maximale et la liste des éléments choisis.
-        """
+    Lit les données du fichier CSV et retourne une liste de tuples contenant les informations sur les actions.
+    """
+    data = []
+    with open(csv_file, mode="r") as file:
+        reader = csv.reader(file)
+        next(reader)
 
+        for row in reader:
+            cost = int(float(row[1]) * 100)
+            if cost > 0:
+                name = row[0]
+                profit = float(row[1]) * float(row[2])
+                data.append((name, cost, profit))
+
+    return data
+
+
+def optimized_algorithm(max_value, actions):
+    """
+    Algorithme optimisé utilisant une approche de programmation dynamique pour trouver la solution optimale
+    au problème du sac à dos 0/1.
+    Renvoie un tuple contenant la valeur maximale et la liste des éléments choisis.
+    """
     matrix = [[0 for _ in range(max_value + 1)] for _ in range(len(actions) + 1)]
 
-    # axe-y pour la liste des actions
     for y, x in itertools.product(range(1, len(actions) + 1), range(1, max_value + 1)):
-        # si le coût de l'action > montant
         matrix[y][x] = (
             max(
                 actions[y - 1][2] + matrix[y - 1][x - actions[y - 1][1]],
@@ -36,7 +38,7 @@ def algorithme_optimised(max_value, actions):
             if actions[y - 1][1] <= x
             else matrix[y - 1][x]
         )
-    # Retrouver les actions sélections en balayant la matrix en sens inverse
+
     n = len(actions)
     actions_combinations = []
 
@@ -45,31 +47,29 @@ def algorithme_optimised(max_value, actions):
         if matrix[n][max_value] == matrix[n - 1][max_value - action[1]] + action[2]:
             actions_combinations.append(action)
             max_value -= action[1]
-
         n -= 1
 
     return matrix[-1][-1], actions_combinations
 
 
 def main():
+    csv_file = "datas/dataset_force_brute.csv"
+    max_value = 50000
+
     start = time.perf_counter()
-    result = algorithme_optimised(48924, data)
+    actions = read_data_from_csv(csv_file)
+    result = optimized_algorithm(max_value, actions)
     stop = time.perf_counter()
-    extracted_from_main()
-    for action in result[1]:
-        print("\n", action[0])
-    extracted_from_main()
-    print(f"Profit maximal: {round(result[0] / 100, 2)}€")
-    print(f"Somme dépensée: {sum(action[1] / 100 for action in result[1])}€")
-    print(f"Temps de traitement: {round(stop - start, 2)}s")
+
     print("=============================================================")
-
-
-# TODO Rename this here and in `main`
-def extracted_from_main():
-    print("=============================================================\n"
-          "=============================================================")
-    print("Les meilleurs résultats des actions sélectionnées: ")
+    print("Les meilleures combinaisons sont :")
+    print("=============================================================")
+    for action in result[1]:
+        print(action[0])
+    print("=============================================================")
+    print(f"Le coût de la combinaison est de : {sum(action[1] / 100 for action in result[1])}€")
+    print(f"Le bénéfice de la combinaison est de : {round(result[0] / 100, 2)}€ sur 2 ans")
+    print(f"Temps de traitement : {round(stop - start, 2)}s")
     print("=============================================================")
 
 

@@ -7,66 +7,69 @@
 
 import csv
 import time
-
-# Création de tuples pour chaque action depuis fichier csv : nom de l'action, coût de l'action, % profit
-with open("datas/dataset_force_brute.csv", mode="r") as file:
-    reader = csv.reader(file)
-    next(reader)
-    data = [
-        (row[0], float(row[1]), float(row[1]) * float(row[2]) / 100)
-        for row in reader
-    ]
-
-# Jeu de données éventuel pour soutenance, avec 3 actions.
-soutenance = [("action_1", 4, 6), ("action_2", 3, 5), ("action_3", 2, 4)]
+from itertools import combinations
 
 
-# Fonction force brute, récursive, testant toutes les combinaisons possibles
-def force_brute_algorithme(max_value, actions, actions_combinations=None):
-    """
-        Approche brute pour trouver la solution optimale au problème du sac à dos 0/1.
-        Retourne un tuple contenant la valeur maximale et la liste des éléments choisis.
-        """
+def find_best_combination(source, wallet):
+    # Open the csv file with 'csv.DictReader'
+    data = []
+    with open(source, newline='') as csv_file:
+        reader = csv.DictReader(csv_file)
+        data.extend(iter(reader))
 
-    if actions_combinations is None:
-        actions_combinations = []
+    # Declaration of variables useful for execution
+    max_benefit = 0
+    sum_cost_max_action = 0
+    max_action = []
 
-    if not actions:
-        return (
-            sum(action[2] for action in actions_combinations),
-            actions_combinations,
-        )
-    action = actions[0]
-    profit_sans_action, liste_sans_action = force_brute_algorithme(max_value, actions[1:], actions_combinations)
-    if action[1] <= max_value:
-        profit_avec_action, liste_avec_action = \
-            force_brute_algorithme(max_value - action[1], actions[1:], actions_combinations + [action])
-        if profit_sans_action < profit_avec_action:
-            return profit_avec_action, liste_avec_action
-    return profit_sans_action, liste_sans_action
+    all_comb = [list(combinations(data, n)) for n in range(len(data) + 1)]
+
+    # Storage of each combination if cost is less than or equal to the wallet amount
+    good_comb = []
+    for comb in all_comb:
+        for small_comb in comb:
+            sum_cost = sum(int(element['price']) for element in small_comb)
+            if sum_cost <= wallet:
+                good_comb.append(small_comb)
+
+    # Calculation of the 2-year profit for each combination and finding the best combination
+    for comb in good_comb:
+        sum_benefit = 0
+        sum_cost = 0
+        for action in comb:
+            sum_benefit += int(action['price']) * (int(action['profit']) / 100)
+            sum_cost += int(action['price'])
+        if sum_benefit > max_benefit:
+            max_benefit = sum_benefit
+            max_action = comb
+            sum_cost_max_action = sum_cost
+
+    return max_action, sum_cost_max_action, max_benefit
 
 
 def main():
-    start = time.perf_counter()
-    result = force_brute_algorithme(500, data)
-    stop = time.perf_counter()
-    extracted_from_main()
-    for action in result[1]:
-        print(action[0])
-    extracted_from_main()
-    print(f"Profit max: {round(result[0], 2)}€")
-    print(f"Somme dépensée: {sum(action[1] for action in result[1])}€")
-    print(f"Temps de traitement: {round(stop - start, 2)}s")
+    # Define fixed variables
+    source = "datas/dataset_force_brute.csv"
+    wallet = 500
+
+    start_time = time.time()
+    # Call the function and get the results
+    best_combination, total_cost, total_profit = find_best_combination(source, wallet)
+    end_time = time.time()
+
     print("=============================================================")
-
-
-# TODO Rename this here and in `main`
-def extracted_from_main():
+    print("Après analyse, Les meilleures combinaisons sont :")
+    print("=============================================================")
+    for action in best_combination:
+        print(f" {action['name']}")
     print("=============================================================\n"
           "=============================================================")
-    print("Les meilleurs résultats actions sélectionnées: ")
-    print("=============================================================")
-
+    print("\nLe coût de cette combinaison est de {:0.2f}€".format(total_cost))
+    print("Le bénéfice de cette combinaison est de {:0.2f}€ sur 2 ans".format(total_profit))
+    execution_time = end_time - start_time
+    print("Temps d'exécution : {:.4f} secondes".format(execution_time))
+    print("=============================================================\n"
+          "=============================================================")
 
 if __name__ == "__main__":
     main()
